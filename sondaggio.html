@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Sondaggio Staff</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1f1f1f, #0d0d0d);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(to right, #ec4899, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    form {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      background: linear-gradient(to right, #ec4899, #a855f7);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .success {
+      color: #22c55e;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🗳️ Sondaggio Staff</h1>
+
+  <form id="surveyForm">
+    <input type="text" id="title" placeholder="Titolo del sondaggio" required>
+    <textarea id="question" placeholder="Domanda del sondaggio" rows="4" required></textarea>
+    <button type="submit">Invia Sondaggio</button>
+    <div class="success" id="successMessage">✅ Sondaggio inviato con successo!</div>
+  </form>
+
+  <script>
+    document.getElementById("surveyForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value;
+      const question = document.getElementById("question").value;
+
+      const webhookURL = "https://discord.com/api/webhooks/1363101237343555775/DWHGtpSBbYo2QTURh2QYB76hoPu5-qDsVa8OCsz72L0MFZiogY0HS3rNWLNJCjqJ-I4g";
+
+      const payload = {
+        embeds: [{
+          title: `📊 ${title}`,
+          description: `${question}\n\n📢 **Vota con una reazione:**\n✅ = Sì\n❌ = No\n🤷‍♂️ = Non so`,
+          color: 0xf59e0b, // arancione oro
+          footer: {
+            text: "Rolaplay Community Nazionale - sondaggio sistemy",
+            icon_url: "https://i.imgur.com/Zn3kZwQ.png"
+          },
+          timestamp: new Date()
+        }]
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("successMessage").style.display = "block";
+          document.getElementById("surveyForm").reset();
+        } else {
+          alert("Errore durante l'invio del sondaggio.");
+        }
+      })
+      .catch(error => {
+        console.error("Errore:", error);
+        alert("Errore di rete.");
+      });
+    });
+  </script>
+
+</body>
+</html>

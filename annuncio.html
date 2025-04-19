@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annuncio - Staff</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1f1f1f, #0d0d0d);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #ec4899, #a855f7);
+      border: none;
+      border-radius: 999px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .success {
+      margin-top: 1rem;
+      color: #22c55e;
+      display: none;
+      text-align: center;
+    }
+
+    a {
+      color: #aaa;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: block;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📢 Invia Annuncio</h1>
+
+  <form id="annuncioForm">
+    <input type="text" id="titolo" placeholder="Titolo Annuncio" required>
+    <textarea id="contenuto" placeholder="Contenuto dell'Annuncio" rows="6" required></textarea>
+    <button type="submit">Invia Annuncio</button>
+    <div class="success" id="successMessage">✅ Annuncio inviato con successo!</div>
+  </form>
+
+  <a href="zona-staff.html">← Torna alla Dashboard</a>
+
+  <script>
+    document.getElementById("annuncioForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const titolo = document.getElementById("titolo").value;
+      const contenuto = document.getElementById("contenuto").value;
+
+      // Invia messaggio su Discord (annuncio)
+      const webhook = "https://discord.com/api/webhooks/1363101079398649936/zsztnQ_nzL4cXhAjO3ZCARjLUXoSmzhrt2qIK2TWS-awl7xZW12Ti8NEJnt1uOVhvKfH";
+
+      const payload = {
+        embeds: [{
+          title: titolo,
+          description: contenuto,
+          color: 0xa855f7,
+          timestamp: new Date()
+        }]
+      };
+
+      fetch(webhook, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // Mostra il messaggio di successo
+      document.getElementById("successMessage").style.display = "block";
+      document.getElementById("annuncioForm").reset();
+    });
+  </script>
+
+</body>
+</html>

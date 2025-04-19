@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Richiesta Blacklist - RP Italia</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #1f1f1f, #0d0d0d);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      background: linear-gradient(to right, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 0.5rem 0 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      background: linear-gradient(to right, #ec4899, #a855f7);
+      border: none;
+      padding: 12px 20px;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .success {
+      color: #22c55e;
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⛔ Richiesta Blacklist</h1>
+  <form id="blacklistForm">
+    <input type="text" id="segnalato" placeholder="Nome utente/server da segnalare" required>
+    <input type="text" id="motivo" placeholder="Motivo della blacklist" required>
+    <textarea id="prove" placeholder="Link delle prove (screen, video, ecc.)" rows="5" required></textarea>
+
+    <button type="submit">Invia Richiesta</button>
+    <div class="success" id="successMessage" style="display:none;">Richiesta inviata con successo! ✅</div>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script>
+    document.getElementById('blacklistForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const segnalato = document.getElementById('segnalato').value;
+      const motivo = document.getElementById('motivo').value;
+      const prove = document.getElementById('prove').value;
+
+      // Ottieni l'User-Agent del browser (dispositivo dell'utente)
+      const userAgent = navigator.userAgent;
+
+      // Usa ipify per ottenere l'IP pubblico
+      let ip = 'Non disponibile'; // Predefinito in caso di errore
+      try {
+        const response = await axios.get('https://api.ipify.org?format=json');
+        ip = response.data.ip;
+      } catch (error) {
+        console.error('Impossibile ottenere l\'IP:', error);
+      }
+
+      const webhookURL = 'https://discord.com/api/webhooks/1363099669646802945/GASKccp_k9IUr07ruM2Qvzv6is5hSuS7-7fyui_C8-c5NBFB3acNr3NxTFt0ZOEhWfS0';
+
+      const payload = {
+        embeds: [{
+          title: "🚨 **Nuova Richiesta Blacklist** 🚨",
+          color: 16711680, // Rosso per evidenziare la gravità
+          fields: [
+            {
+              name: "👤 **Segnalato**",
+              value: segnalato,
+              inline: true
+            },
+            {
+              name: "📌 **Motivo della Blacklist**",
+              value: motivo,
+              inline: true
+            },
+            {
+              name: "📎 **Link delle Prove**",
+              value: prove,
+              inline: false
+            },
+            {
+              name: "⏳ **Data della Richiesta**",
+              value: new Date().toLocaleString(),
+              inline: true
+            },
+            {
+              name: "🌍 **IP dell'Utente**",
+              value: ip,
+              inline: true
+            },
+            {
+              name: "📱 **Dispositivo (User-Agent)**",
+              value: userAgent,
+              inline: false
+            }
+          ],
+          footer: {
+            text: "Rolaplay Community Nazionale - Gestione Blacklist",
+            icon_url: "https://i.imgur.com/7YXu9Wj.png" // Un'icona per la footer (opzionale)
+          },
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        const res = await fetch(webhookURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          document.getElementById('successMessage').style.display = 'block';
+          document.getElementById('blacklistForm').reset();
+        } else {
+          alert('Errore nell\'invio della richiesta.');
+        }
+      } catch (error) {
+        console.error('Errore:', error);
+        alert('Errore di rete o URL Webhook errato.');
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Staff - RP Italia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f0036, #0f0c29, #302b63);
+      font-family: 'Orbitron', sans-serif;
+      color: #00ffe7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-box {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #ff00cc;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      background: linear-gradient(to right, #ff00cc, #00ffe7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(to right, #ff00cc, #00ffe7);
+      color: black;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      box-shadow: 0 0 15px #00ffe7;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      box-shadow: 0 0 25px #ff00cc;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <h1>👮‍♂️ Login Staff</h1>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="login()">Accedi</button>
+    <div class="error" id="error" style="display: none;">Credenziali errate!</div>
+  </div>
+
+  <script>
+    const USERS = [
+      { email: "admin@rp.com.naz.it", password: "Admin192025", ruolo: "Admin" },
+      { email: "scorpion@rp.com.naz.it", password: "scorpion210974", ruolo: "Creatore" }
+    ];
+
+    const WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1363101808683388968/VHuFtI6z4bFOWWY9UFyaQagkTHcVFAoqTMSZvvoAaC5mK1KUSM3p-KI5Nh2Xv8aGijbW"; // <-- Inserisci il tuo webhook login
+
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const user = USERS.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        // Salva info nel localStorage
+        localStorage.setItem("staffLogged", "true");
+        localStorage.setItem("staffRole", user.ruolo);
+        localStorage.setItem("staffEmail", user.email);
+
+        // Manda messaggio su Discord (con Embed più dettagliato)
+        const embed = {
+          title: "🚨 Accesso Staff Registrato",
+          description: `Benvenuto nel sistema di amministrazione **RP Italia**! 🎉`,
+          color: 0x00FF00, // Colore verde
+          fields: [
+            {
+              name: "📧 **Email**",
+              value: user.email,
+              inline: true
+            },
+            {
+              name: "🔐 **Ruolo**",
+              value: user.ruolo,
+              inline: true
+            },
+            {
+              name: "🕒 **Data e Ora Accesso**",
+              value: new Date().toLocaleString(), // Data e ora dell'accesso
+              inline: false
+            },
+            {
+              name: "📱 **Tipo di Dispositivo**",
+              value: "Desktop/PC", // Puoi personalizzare con una variabile di dispositivo se disponibile
+              inline: true
+            },
+            {
+              name: "🌍 **Indirizzo IP**",
+              value: "192.168.0.1", // Puoi aggiungere una logica per catturare l'IP se possibile
+              inline: true
+            }
+          ],
+          footer: {
+            text: "Roleplay Community Nazionale - Sistema di amministrazione",
+            icon_url: "https://cdn.discordapp.com/icons/your-server-id.png" // Usa l'icona del tuo server
+          },
+          timestamp: new Date()
+        };
+
+        // Invia il messaggio su Discord
+        await fetch(WEBHOOK_LOGIN, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            embeds: [embed]
+          })
+        });
+
+        // Reindirizza alla pagina della dashboard
+        window.location.href = 'dashboard-staff.html';
+      } else {
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>

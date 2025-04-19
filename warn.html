@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Warn Staff - Ultra Style</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2rem;
+    }
+
+    form {
+      background-color: #1e1e2f;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 0 20px rgba(255, 75, 43, 0.2);
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b40;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    button {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+    }
+
+    .success {
+      color: #00ff88;
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🚨 Sistema Warn Avanzato</h1>
+
+  <form id="warnForm">
+    <input type="text" id="staffID" placeholder="ID Staff" required>
+    <input type="text" id="userID" placeholder="ID Utente da warnare" required>
+
+    <select id="tipoWarn">
+      <option value="🟡 Avviso Verbale">🟡 Avviso Verbale</option>
+      <option value="🟠 Avviso Ufficiale">🟠 Avviso Ufficiale</option>
+      <option value="🔴 Warn Grave">🔴 Warn Grave</option>
+    </select>
+
+    <textarea id="motivo" placeholder="Motivo del warn" rows="4" required></textarea>
+
+    <select id="tag">
+      <option value="">Nessun tag</option>
+      <option value="@everyone">@everyone</option>
+      <option value="@here">@here</option>
+    </select>
+
+    <button type="submit">Invia Warn</button>
+    <div class="success" id="successMessage">✅ Warn inviato su Discord con successo!</div>
+  </form>
+
+  <script>
+    document.getElementById("warnForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const staffID = document.getElementById("staffID").value;
+      const userID = document.getElementById("userID").value;
+      const tipoWarn = document.getElementById("tipoWarn").value;
+      const motivo = document.getElementById("motivo").value;
+      const tag = document.getElementById("tag").value;
+
+      const webhookURL = "https://discord.com/api/webhooks/1363101474149634128/A9o-_bMArbAKeMcrP1IN81GMeC9fBl_3LtDj0bokHXkl8ncUi1L8vwW5_CPyV9iqrkwS";
+
+      const payload = {
+        content: tag,
+        embeds: [{
+          title: `🚨 NUOVO WARN INVIATO`,
+          color: 0xff4b2b,
+          fields: [
+            { name: "👮‍♂️ | Staff", value: `⇒ <@${staffID}> (\`${staffID}\`)`, inline: true },
+            { name: "👤 | Utente Warnato", value: `⇒ <@${userID}> (\`${userID}\`)`, inline: true },
+            { name: "📛 | Tipo di Warn", value: `⇒ **${tipoWarn}**`, inline: false },
+            { name: "📝 | Motivo", value:   motivo, inline: false }
+          ],
+          footer: {
+            text: "Rolaplay Community Nazionale • Warn System",
+            icon_url: "https://i.imgur.com/Zn3kZwQ.png"
+          },
+          timestamp: new Date()
+        }]
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("successMessage").style.display = "block";
+          document.getElementById("warnForm").reset();
+        } else {
+          alert("Errore nell'invio del warn.");
+        }
+      })
+      .catch(error => {
+        console.error("Errore:", error);
+        alert("Errore di rete.");
+      });
+    });
+  </script>
+
+</body>
+</html>
