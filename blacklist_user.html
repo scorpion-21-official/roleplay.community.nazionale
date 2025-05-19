@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blacklist Utente</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1f1f1f, #0d0d0d);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      background: linear-gradient(to right, #ef4444, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    form {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #ef4444, #f97316);
+      border: none;
+      border-radius: 999px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .success {
+      margin-top: 1rem;
+      color: #22c55e;
+      display: none;
+      text-align: center;
+    }
+
+    a {
+      color: #aaa;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: block;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🚫 Blacklist Utente</h1>
+
+  <form id="blacklistUserForm">
+    <input type="text" id="username" placeholder="ID Utente o Username" required />
+    <textarea id="motivo" placeholder="Motivo della blacklist" rows="5" required></textarea>
+    <button type="submit">Inserisci in Blacklist</button>
+    <div class="success" id="successMessage">✅ Utente inserito in blacklist!</div>
+  </form>
+
+  <a href="zona-staff.html">← Torna alla Dashboard</a>
+
+  <script>
+    document.getElementById("blacklistUserForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const motivo = document.getElementById("motivo").value;
+
+      const webhook = "INSERISCI_WEBHOOK_USER";
+
+      const payload = {
+        embeds: [{
+          title: "🚫 Utente Blacklistato",
+          fields: [
+            { name: "👤 Utente", value: username },
+            { name: "📝 Motivo", value: motivo }
+          ],
+          color: 0xef4444,
+          timestamp: new Date()
+        }]
+      };
+
+      fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById("successMessage").style.display = "block";
+      document.getElementById("blacklistUserForm").reset();
+    });
+  </script>
+
+</body>
+</html>
