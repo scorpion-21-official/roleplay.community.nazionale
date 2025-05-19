@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blacklist Utente</title>
   <style>
     body {
@@ -19,12 +19,11 @@
     }
 
     h1 {
-      background: linear-gradient(to right, #ef4444, #f97316);
+      background: linear-gradient(to right, #ef4444, #8b5cf6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-size: 2.2rem;
       margin-bottom: 1.5rem;
-      text-align: center;
     }
 
     form {
@@ -32,11 +31,11 @@
       padding: 2rem;
       border-radius: 1rem;
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 12px;
       margin-bottom: 1rem;
@@ -50,7 +49,7 @@
     button {
       width: 100%;
       padding: 12px;
-      background: linear-gradient(to right, #ef4444, #f97316);
+      background: linear-gradient(to right, #ef4444, #8b5cf6);
       border: none;
       border-radius: 999px;
       color: white;
@@ -84,50 +83,83 @@
 
   <h1>🚫 Blacklist Utente</h1>
 
-  <form id="blacklistUserForm">
-    <input type="text" id="username" placeholder="ID Utente o Username" required />
+  <form id="blacklistForm">
+    <input type="text" id="userId" placeholder="Nome o ID Utente" required>
     <textarea id="motivo" placeholder="Motivo della blacklist" rows="4" required></textarea>
-    <input type="text" id="pericolosita" placeholder="Livello di Pericolosità (Alta, Media, Bassa)" required />
-    <textarea id="prove" placeholder="Prove (link, descrizione, screenshot)" rows="4" required></textarea>
-    <button type="submit">Inserisci in Blacklist</button>
-    <div class="success" id="successMessage">✅ Utente inserito in blacklist!</div>
+    <select id="pericolosita" required>
+      <option value="" disabled selected>Seleziona Pericolosità</option>
+      <option value="bassa">Bassa</option>
+      <option value="media">Media</option>
+      <option value="alta">Alta</option>
+      <option value="estrema">Estrema</option>
+    </select>
+    <textarea id="prove" placeholder="Link delle prove (opzionale)" rows="3"></textarea>
+    <button type="submit">🚫 Invia Blacklist</button>
+    <div class="success" id="successMessage">✅ Utente blacklistato con successo!</div>
   </form>
 
   <a href="zona-staff.html">← Torna alla Dashboard</a>
 
   <script>
-    document.getElementById("blacklistUserForm").addEventListener("submit", function(e) {
+    document.getElementById("blacklistForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const username = document.getElementById("username").value;
+      const userId = document.getElementById("userId").value;
       const motivo = document.getElementById("motivo").value;
       const pericolosita = document.getElementById("pericolosita").value;
       const prove = document.getElementById("prove").value;
 
-      const webhook = "https://discord.com/api/webhooks/1374076903962574929/HSTatECzY4ffAzVIAk04JhwzTtW6lJLd_fe1QfCP6EacPVc2meumImj2RX4RTNSJsYGV";
+      const webhook = "https://discord.com/api/webhooks/1374085978159059004/8iXvDu2Z8Q_n9K15AOMUskJYtzDtFQG5xo7M5ImG7eH7e0Ie61QWm_EneCSO4dL4ws4i";
 
       const payload = {
-        embeds: [{
-          title: "🚫 Utente Blacklistato",
-          color: 0xef4444,
-          fields: [
-            { name: "👤 Utente", value: username },
-            { name: "📝 Motivo", value: motivo },
-            { name: "🔥 Pericolosità", value: pericolosita },
-            { name: "📎 Prove", value: prove }
-          ],
-          timestamp: new Date()
-        }]
+        embeds: [
+          {
+            title: "🚨 | Nuovo Utente Blacklistato",
+            color: 0xff4444,
+            thumbnail: {
+              url: "https://media.discordapp.net/attachments/1240660429924077620/1374061078178435092/roleplay20community20nazionale20logo.png?ex=682cad99&is=682b5c19&hm=218597029ef4dafab6be99c085577d7e3c8a0fbc8c731690d0414bc1143749d4&=&format=webp&quality=lossless&width=596&height=596"
+            },
+            fields: [
+              {
+                name: "👤 Nome o ID Utente",
+                value: `\`${userId}\``,
+                inline: false
+              },
+              {
+                name: "📄 Motivo",
+                value: motivo,
+                inline: false
+              },
+              {
+                name: "⚠️ Pericolosità",
+                value: `**${pericolosita.toUpperCase()}**`,
+                inline: true
+              },
+              {
+                name: "📎 Prove",
+                value: prove || "*Nessuna prova allegata*",
+                inline: false
+              }
+            ],
+            footer: {
+              text: "Sistema di Moderazione Nazionale - Blacklist Utente",
+              icon_url: "https://media.discordapp.net/attachments/1240660429924077620/1374061078178435092/roleplay20community20nazionale20logo.png?ex=682cad99&is=682b5c19&hm=218597029ef4dafab6be99c085577d7e3c8a0fbc8c731690d0414bc1143749d4&=&format=webp&quality=lossless&width=596&height=596"
+            },
+            timestamp: new Date()
+          }
+        ]
       };
 
       fetch(webhook, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(payload)
       });
 
       document.getElementById("successMessage").style.display = "block";
-      document.getElementById("blacklistUserForm").reset();
+      document.getElementById("blacklistForm").reset();
     });
   </script>
 
