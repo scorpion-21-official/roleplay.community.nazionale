@@ -1,1 +1,40 @@
-blacklist_server.html
+<h1>🛑 Blacklist Server</h1>
+
+<form id="blacklistServerForm">
+  <input type="text" id="serverName" placeholder="Nome Server / IP / ID" required>
+  <textarea id="motivoServer" placeholder="Motivo della Blacklist" rows="5" required></textarea>
+  <button type="submit">Inserisci in Blacklist</button>
+  <div class="success" id="successMessageServer">✅ Server bloccato con successo!</div>
+</form>
+
+<script>
+  document.getElementById("blacklistServerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const serverName = document.getElementById("serverName").value;
+    const motivo = document.getElementById("motivoServer").value;
+
+    const webhook = "INSERISCI_WEBHOOK_SERVER";
+
+    const payload = {
+      embeds: [{
+        title: "🛑 Nuovo Server in Blacklist",
+        fields: [
+          { name: "🌐 Server", value: serverName },
+          { name: "📝 Motivo", value: motivo }
+        ],
+        color: 0xf97316,
+        timestamp: new Date()
+      }]
+    };
+
+    fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    document.getElementById("successMessageServer").style.display = "block";
+    document.getElementById("blacklistServerForm").reset();
+  });
+</script>
