@@ -1,40 +1,135 @@
-<h1>🛑 Blacklist Server</h1>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blacklist Server</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1f1f1f, #0d0d0d);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-<form id="blacklistServerForm">
-  <input type="text" id="serverName" placeholder="Nome Server / IP / ID" required>
-  <textarea id="motivoServer" placeholder="Motivo della Blacklist" rows="5" required></textarea>
-  <button type="submit">Inserisci in Blacklist</button>
-  <div class="success" id="successMessageServer">✅ Server bloccato con successo!</div>
-</form>
+    h1 {
+      background: linear-gradient(to right, #ef4444, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
 
-<script>
-  document.getElementById("blacklistServerForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+    form {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    }
 
-    const serverName = document.getElementById("serverName").value;
-    const motivo = document.getElementById("motivoServer").value;
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: white;
+      font-size: 1rem;
+    }
 
-    const webhook = "INSERISCI_WEBHOOK_SERVER";
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #ef4444, #f97316);
+      border: none;
+      border-radius: 999px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-    const payload = {
-      embeds: [{
-        title: "🛑 Nuovo Server in Blacklist",
-        fields: [
-          { name: "🌐 Server", value: serverName },
-          { name: "📝 Motivo", value: motivo }
-        ],
-        color: 0xf97316,
-        timestamp: new Date()
-      }]
-    };
+    button:hover {
+      opacity: 0.9;
+    }
 
-    fetch(webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    .success {
+      margin-top: 1rem;
+      color: #22c55e;
+      display: none;
+      text-align: center;
+    }
+
+    a {
+      color: #aaa;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: block;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🚫 Blacklist Server</h1>
+
+  <form id="blacklistServerForm">
+    <input type="text" id="serverId" placeholder="ID Server o Nome Server" required />
+    <textarea id="motivo" placeholder="Motivo della blacklist" rows="4" required></textarea>
+    <input type="text" id="pericolosita" placeholder="Livello di Pericolosità (Alta, Media, Bassa)" required />
+    <textarea id="prove" placeholder="Prove (link, descrizione, screenshot)" rows="4" required></textarea>
+    <button type="submit">Inserisci in Blacklist</button>
+    <div class="success" id="successMessage">✅ Server inserito in blacklist!</div>
+  </form>
+
+  <a href="zona-staff.html">← Torna alla Dashboard</a>
+
+  <script>
+    document.getElementById("blacklistServerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const serverId = document.getElementById("serverId").value;
+      const motivo = document.getElementById("motivo").value;
+      const pericolosita = document.getElementById("pericolosita").value;
+      const prove = document.getElementById("prove").value;
+
+      const webhook = "INSERISCI_WEBHOOK_SERVER";
+
+      const payload = {
+        embeds: [{
+          title: "🚫 Server Blacklistato",
+          color: 0xef4444,
+          fields: [
+            { name: "🖥️ Server", value: serverId },
+            { name: "📝 Motivo", value: motivo },
+            { name: "🔥 Pericolosità", value: pericolosita },
+            { name: "📎 Prove", value: prove }
+          ],
+          timestamp: new Date()
+        }]
+      };
+
+      fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById("successMessage").style.display = "block";
+      document.getElementById("blacklistServerForm").reset();
     });
+  </script>
 
-    document.getElementById("successMessageServer").style.display = "block";
-    document.getElementById("blacklistServerForm").reset();
-  });
-</script>
+</body>
+</html>
