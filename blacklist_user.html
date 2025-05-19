@@ -86,7 +86,9 @@
 
   <form id="blacklistUserForm">
     <input type="text" id="username" placeholder="ID Utente o Username" required />
-    <textarea id="motivo" placeholder="Motivo della blacklist" rows="5" required></textarea>
+    <textarea id="motivo" placeholder="Motivo della blacklist" rows="4" required></textarea>
+    <input type="text" id="pericolosita" placeholder="Livello di Pericolosità (Alta, Media, Bassa)" required />
+    <textarea id="prove" placeholder="Prove (link, descrizione, screenshot)" rows="4" required></textarea>
     <button type="submit">Inserisci in Blacklist</button>
     <div class="success" id="successMessage">✅ Utente inserito in blacklist!</div>
   </form>
@@ -99,17 +101,21 @@
 
       const username = document.getElementById("username").value;
       const motivo = document.getElementById("motivo").value;
+      const pericolosita = document.getElementById("pericolosita").value;
+      const prove = document.getElementById("prove").value;
 
       const webhook = "INSERISCI_WEBHOOK_USER";
 
       const payload = {
         embeds: [{
           title: "🚫 Utente Blacklistato",
+          color: 0xef4444,
           fields: [
             { name: "👤 Utente", value: username },
-            { name: "📝 Motivo", value: motivo }
+            { name: "📝 Motivo", value: motivo },
+            { name: "🔥 Pericolosità", value: pericolosita },
+            { name: "📎 Prove", value: prove }
           ],
-          color: 0xef4444,
           timestamp: new Date()
         }]
       };
